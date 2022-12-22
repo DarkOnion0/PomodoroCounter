@@ -1,14 +1,10 @@
 { pkgs ? import <nixpkgs> { }
 , stdenv ? pkgs.stdenv
-, lib ? stdenv.lib
+, lib ? pkgs.lib
 # A set providing `buildRustPackage :: attrsets -> derivation`
 , rustPlatform ? pkgs.rustPlatform
 , fetchFromGitHub ? pkgs.fetchFromGitHub
 , gitignoreSrc ? null
-, pkgconfig ? pkgs.pkgconfig
-, gtk3 ? pkgs.gtk3
-, glib ? pkgs.glib
-, gobject-introspection ? pkgs.gobject-introspection
 }:
 
 let
@@ -23,22 +19,19 @@ let
     }) { inherit lib; }).gitignoreSource;
 in
 rustPlatform.buildRustPackage rec {
-  pname = "sample-flake-rust";
-  version = "0.0.1";
+  pname = "pomodoro_counter";
+  version = "0.1.0";
 
   src = gitignoreSource ./.;
 
-  buildInputs = [
-    gtk3
-    glib
-    gobject-introspection
-  ];
-  nativeBuildInputs = [ pkgconfig ];
-  cargoSha256 = "sha256-0hfmV4mbr3l86m0X7EMYTOu/b+BjueVEbbyQz0KgOFY=";
+  cargoSha256 = "sha256-Eha/5TRcmHuxmxtcTHu/xKAZuWERRmzj3U1dnfTlbZU=";
 
-  meta = with stdenv.lib; {
-    homepage = "";
-    description = "Sample flake repository for a Rust application";
-    license = licenses.mit;
+  cargoLock = {
+    lockFile = ./Cargo.lock;
+  };
+
+  meta = with lib; {
+    description = "An app to convert pomodoros to real hours";
+    license = licenses.agpl3;
   };
 }

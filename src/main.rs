@@ -37,13 +37,15 @@ fn main() {
         chill_time: 0,
     };
 
-    for _ in 0..args.pomodoro {
-        if cycle_counter.cycle == args.reset_point - 1 {
-            cycle_counter.chill_time += args.long_pause;
-            cycle_counter.cycle = 0;
-        } else {
-            cycle_counter.cycle += 1;
-            cycle_counter.chill_time += args.short_pause;
+    for i in 0..args.pomodoro {
+        if i != args.pomodoro - 1 {
+            if cycle_counter.cycle == args.reset_point - 1 {
+                cycle_counter.chill_time += args.long_pause;
+                cycle_counter.cycle = 0;
+            } else {
+                cycle_counter.cycle += 1;
+                cycle_counter.chill_time += args.short_pause;
+            }
         }
         cycle_counter.work_time += args.time;
     }

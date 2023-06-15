@@ -1,7 +1,6 @@
 use clap::Parser;
-mod types;
-use crate::types::Args;
-use crate::types::Counter;
+use core::Args;
+use core::Counter;
 
 /// Simple program convert pomodoros to real time
 fn main() {

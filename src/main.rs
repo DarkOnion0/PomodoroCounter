@@ -1,33 +1,9 @@
 use clap::Parser;
+mod types;
+use crate::types::Args;
+use crate::types::Counter;
 
 /// Simple program convert pomodoros to real time
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    /// The number of pomodoro
-    #[arg(short, long)]
-    pomodoro: u32,
-    /// The time associated to a pomodoro in minutes
-    #[arg(short, long, default_value_t = 25)]
-    time: u32,
-    /// The number of pomodoro before the reset happen
-    #[arg(short, long, default_value_t = 4)]
-    reset_point: u8,
-    /// The short pause time in minutes
-    #[arg(short, long, default_value_t = 5)]
-    short_pause: u32,
-    /// The long pause time in minutes
-    #[arg(short, long, default_value_t = 20)]
-    long_pause: u32,
-}
-
-struct Counter {
-    cycle: u8,
-
-    work_time: u32,
-    chill_time: u32,
-}
-
 fn main() {
     let args = Args::parse();
 

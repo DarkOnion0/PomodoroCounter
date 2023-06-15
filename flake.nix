@@ -13,7 +13,6 @@
     self,
     nixpkgs,
     flake-parts,
-    fenix,
     devenv,
     ...
   }:

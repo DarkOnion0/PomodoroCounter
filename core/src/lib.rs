@@ -1,4 +1,5 @@
 use clap::Parser;
+use serde::Serialize;
 
 /// Global app config
 #[derive(Parser, Debug)]
@@ -43,12 +44,27 @@ impl Args {
 
         cycle_counter
     }
+    pub fn new() -> Self {
+        // Should be init with the same default values as the clap ones
+        Args {
+            pomodoro: 0,
+            time: 25,
+            reset_point: 4,
+            short_pause: 5,
+            long_pause: 20,
+        }
+    }
 }
 
 /// The counter status for the requested pomodoro time
+#[derive(Serialize)]
 pub struct Counter {
-    pub cycle: u8,
+    /// The cycle counter, only used to convert from pomodoro to time
+    #[serde(skip_serializing)]
+    cycle: u8,
 
+    /// The total work time in minute
     pub work_time: u32,
+    /// The total chill time in minute
     pub chill_time: u32,
 }

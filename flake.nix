@@ -61,11 +61,39 @@
           ];
         };
 
+        packages = rec {
+          default = cli;
+          cli = pkgs.rustPlatform.buildRustPackage rec {
+            pname = "cli";
+            version = "0.1.0";
+            src = ./.;
+            cargoBuildFlags = "-p ${pname}";
+
+            cargoLock = {
+              lockFile = ./Cargo.lock;
+            };
+          };
+          web = pkgs.rustPlatform.buildRustPackage rec {
+            pname = "web";
+            version = "0.1.0";
+            src = ./.;
+            cargoBuildFlags = "-p ${pname}";
+
+            cargoLock = {
+              lockFile = ./Cargo.lock;
+            };
+          };
+        };
+
         apps = rec {
-          default = pomodoro_counter;
-          pomodoro_counter = {
+          default = cli;
+          cli = {
             type = "app";
-            program = "${self.packages.${system}.default}/bin/pomodoro_counter";
+            program = "${self.packages.${system}.cli}/bin/cli";
+          };
+          web = {
+            type = "app";
+            program = "${self.packages.${system}.web}/bin/web";
           };
         };
       };

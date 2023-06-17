@@ -2,9 +2,9 @@ name: Rust
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
@@ -12,50 +12,81 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         workspace: ["web", "cli"]
 
     steps:
-    - name: Checkout source code
-      uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v3
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ env.RUST_TOOLCHAIN }}
-        override: true
-        profile: minimal
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          override: true
+          profile: minimal
 
-    - name: Build
-      run: cargo build -p ${{ matrix.workspace }} --verbose
-      
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: x86_64-linux-${{ matrix.workspace }}
-        path: ./result/bin/${{ matrix.workspace }}
+      - name: Restore rust target
+        id: cache-rust-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./target
+          key: ${{ runner.os }}-rust
+
+      - name: Build
+        run: cargo build -p ${{ matrix.workspace }} --verbose
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: x86_64-linux-debug-${{ matrix.workspace }}
+          path: ./target/debug/${{ matrix.workspace }}
+
+      - name: Save rust target
+        id: cache-primes-save
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./target
+          key: ${{ steps.cache-rust-restore.outputs.cache-primary-key }}
 
   test:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         workspace: ["web", "cli", "core"]
 
     steps:
-    - name: Checkout source code
-      uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v3
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ env.RUST_TOOLCHAIN }}
-        override: true
-        profile: minimal
+      - name: Restore rust target
+        id: cache-rust-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./target
+          key: ${{ runner.os }}-rust
 
-    - name: Run tests
-      run: cargo test -p ${{ matrix.workspace }} --verbose
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          override: true
+          profile: minimal
+
+      - name: Run tests
+        run: cargo test -p ${{ matrix.workspace }} --verbose
+
+      - name: Save rust target
+        id: cache-primes-save
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./target
+          key: ${{ steps.cache-rust-restore.outputs.cache-primary-key }}

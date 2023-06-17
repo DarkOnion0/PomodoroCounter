@@ -22,12 +22,9 @@ pub struct Args {
     pub long_pause: u32,
 }
 impl Args {
+    /// Convert pomodoro(s) to minutes
     pub fn convert(&mut self) -> Counter {
-        let mut cycle_counter = Counter {
-            cycle: 0,
-            work_time: 0,
-            chill_time: 0,
-        };
+        let mut cycle_counter = Counter::new();
 
         for i in 0..self.pomodoro {
             if i != self.pomodoro - 1 {
@@ -44,10 +41,11 @@ impl Args {
 
         cycle_counter
     }
-    pub fn new() -> Self {
+    /// Create a new instance of Args
+    pub fn new(pomodoro: u32) -> Self {
         // Should be init with the same default values as the clap ones
         Args {
-            pomodoro: 0,
+            pomodoro: pomodoro,
             time: 25,
             reset_point: 4,
             short_pause: 5,
@@ -57,7 +55,7 @@ impl Args {
 }
 
 /// The counter status for the requested pomodoro time
-#[derive(Serialize)]
+#[derive(Default, Serialize)]
 pub struct Counter {
     /// The cycle counter, only used to convert from pomodoro to time
     #[serde(skip_serializing)]
@@ -67,4 +65,30 @@ pub struct Counter {
     pub work_time: u32,
     /// The total chill time in minute
     pub chill_time: u32,
+}
+impl Counter {
+    /// Create a new instance of Counter
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    /// Check the validity of the conversion process from pomodoro to time
+    fn pomdoro_to_time() {
+        let mut args = Args::new(5);
+        let result = args.convert();
+        assert_eq!(
+            result.work_time, 125,
+            "The work time for 5 pomodoros is not correct"
+        );
+        assert_eq!(
+            result.chill_time, 35,
+            "The chill time for 5 pomodoros is not correct"
+        );
+    }
 }

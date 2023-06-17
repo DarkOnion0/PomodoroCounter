@@ -1,0 +1,61 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_TOOLCHAIN: "1.69"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        workspace: ["web", "cli"]
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.RUST_TOOLCHAIN }}
+        override: true
+        profile: minimal
+
+    - name: Build
+      run: cargo build -p ${{ matrix.workspace }} --verbose
+      
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: x86_64-linux-${{ matrix.workspace }}
+        path: ./result/bin/${{ matrix.workspace }}
+
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        workspace: ["web", "cli", "core"]
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.RUST_TOOLCHAIN }}
+        override: true
+        profile: minimal
+
+    - name: Run tests
+      run: cargo test -p ${{ matrix.workspace }} --verbose

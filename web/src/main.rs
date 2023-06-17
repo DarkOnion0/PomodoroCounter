@@ -18,7 +18,6 @@ async fn main() {
 
 /// Convert the requested number of pomodoro to time
 async fn get_pomodoro(Path(pomodoro): Path<u32>) -> Json<Counter> {
-    let mut args = Args::new();
-    args.pomodoro = pomodoro;
+    let mut args = Args::new(pomodoro);
     Json(args.convert())
 }

@@ -31,7 +31,10 @@
           inherit inputs pkgs;
           modules = [
             {
-              env.CARGO_INSTALL_ROOT = "${toString ./.}/.cargo";
+              env = {
+                CARGO_INSTALL_ROOT = "${toString ./.}/.cargo";
+                RUST_BACKTRACE = 1;
+              };
 
               languages.rust.enable = true;
 

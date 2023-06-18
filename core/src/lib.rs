@@ -94,8 +94,8 @@ mod tests {
     #[test]
     /// Check the validity of the conversion process from pomodoro to time
     fn pomdoro_to_time() {
-        let mut args = Args::new(5);
-        let result = args.convert();
+        let mut args = Pomodoro::new(5);
+        let result = args.to_time();
         assert_eq!(
             result.work_time, 125,
             "The work time for 5 pomodoros is not correct"

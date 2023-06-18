@@ -1,31 +1,23 @@
-use clap::Parser;
 use serde::Serialize;
 
-/// Global app config
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-pub struct Args {
+pub struct Pomodoro {
     /// The number of pomodoro
-    #[arg(short, long)]
     pub pomodoro: u32,
     /// The time associated to a pomodoro in minutes
-    #[arg(short, long, default_value_t = 25)]
     pub time: u32,
     /// The number of pomodoro before the reset happen
-    #[arg(short, long, default_value_t = 4)]
     pub reset_point: u8,
     /// The short pause time in minutes
-    #[arg(short, long, default_value_t = 5)]
     pub short_pause: u32,
     /// The long pause time in minutes
-    #[arg(short, long, default_value_t = 20)]
     pub long_pause: u32,
 }
-impl Args {
+impl Pomodoro {
     /// Convert pomodoro(s) to minutes
-    pub fn convert(&mut self) -> Counter {
+    pub fn to_time(&mut self) -> Counter {
         let mut cycle_counter = Counter::new();
 
+        // Itereate over the pomodoro(s)
         for i in 0..self.pomodoro {
             if i != self.pomodoro - 1 {
                 if cycle_counter.cycle == self.reset_point - 1 {
@@ -41,10 +33,32 @@ impl Args {
 
         cycle_counter
     }
-    /// Create a new instance of Args
+    /// Convert the `available_time` to the corresping amount of pomodoro
+    pub fn to_pomodoro(&mut self, mut available_time: i32) {
+        let mut counter = 0;
+
+        // Continue while a new pomodoro can be done (the chill time is not included)
+        while available_time >= self.time as i32 {
+            self.pomodoro += 1;
+            available_time -= self.time as i32;
+
+            // Set the counter reset rules and the corresponding chill time
+            if counter == self.reset_point - 1 {
+                // reset the counter after and add a long pause when the end of the cycle is
+                // reached
+                counter = 0;
+                available_time -= self.long_pause as i32;
+            } else {
+                // increase the counter and add a short pause
+                counter += 1;
+                available_time -= self.short_pause as i32;
+            }
+        }
+    }
+    /// Create a new instance
     pub fn new(pomodoro: u32) -> Self {
         // Should be init with the same default values as the clap ones
-        Args {
+        Pomodoro {
             pomodoro: pomodoro,
             time: 25,
             reset_point: 4,

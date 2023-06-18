@@ -1,6 +1,8 @@
+# Rust
 /target
 .direnv/
 
+# Nix
 result/
 result
 
@@ -8,3 +10,6 @@ result
 .devenv*
 devenv.local.nix
 .pre-commit-config.yaml
+
+# JetBrains
+.idea/

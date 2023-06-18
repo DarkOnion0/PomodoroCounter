@@ -105,4 +105,25 @@ mod tests {
             "The chill time for 5 pomodoros is not correct"
         );
     }
+
+    #[test]
+    fn time_to_pomodoro_exact_time() {
+        let mut pomodoro = Pomodoro::new(0);
+        pomodoro.to_pomodoro(160);
+        assert_eq!(
+            pomodoro.pomodoro, 5,
+            "The number of available pomodoro's in 160 mins is not correct [expected: 5; get: {}]",
+            pomodoro.pomodoro
+        );
+    }
+    #[test]
+    fn time_to_pomodoro_in_betwen() {
+        let mut pomodoro = Pomodoro::new(0);
+        pomodoro.to_pomodoro(159);
+        assert_eq!(
+            pomodoro.pomodoro, 4,
+            "The number of available pomodoro's in 160 mins is not correct [expected: 4; get: {}]",
+            pomodoro.pomodoro
+        );
+    }
 }

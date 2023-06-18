@@ -36,6 +36,7 @@ jobs:
         with:
           path: |
             ./target
+            ~/.cargo
           key: ${{ runner.os }}-rust
 
       - name: Build
@@ -53,6 +54,7 @@ jobs:
         with:
           path: |
             ./target
+            ~/.cargo
           key: ${{ steps.cache-rust-restore.outputs.cache-primary-key }}
 
   test:
@@ -72,6 +74,7 @@ jobs:
         with:
           path: |
             ./target
+            ~/.cargo
           key: ${{ runner.os }}-rust
 
       - name: Install Rust toolchain
@@ -90,4 +93,5 @@ jobs:
         with:
           path: |
             ./target
+            ~/.cargo
           key: ${{ steps.cache-rust-restore.outputs.cache-primary-key }}

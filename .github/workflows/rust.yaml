@@ -42,11 +42,14 @@ jobs:
       - name: Build
         run: cargo build -p ${{ matrix.workspace }} --verbose
 
+      - name: Zip artifact
+        run: zip release.zip ./target/debug/${{ matrix.workspace }} -r
+
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
           name: x86_64-linux-debug-${{ matrix.workspace }}
-          path: ./target/debug/${{ matrix.workspace }}
+          path: ./release.zip
 
       - name: Save rust target
         id: cache-primes-save

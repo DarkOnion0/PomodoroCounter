@@ -1,6 +1,6 @@
 use axum::extract::Path;
 use axum::{routing::get, Json, Router};
-use core::{Args, Counter};
+use core::{Counter, Pomodoro};
 
 #[tokio::main]
 async fn main() {
@@ -18,6 +18,6 @@ async fn main() {
 
 /// Convert the requested number of pomodoro to time
 async fn get_pomodoro(Path(pomodoro): Path<u32>) -> Json<Counter> {
-    let mut args = Args::new(pomodoro);
-    Json(args.convert())
+    let mut args = Pomodoro::new(pomodoro);
+    Json(args.to_time())
 }

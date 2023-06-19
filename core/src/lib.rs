@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+#[derive(Default, Serialize)]
 pub struct Pomodoro {
     /// The number of pomodoro
     pub pomodoro: u32,

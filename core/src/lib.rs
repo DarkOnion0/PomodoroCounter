@@ -35,8 +35,9 @@ impl Pomodoro {
         cycle_counter
     }
     /// Convert the `available_time` to the corresping amount of pomodoro
-    pub fn to_pomodoro(&mut self, mut available_time: i32) {
-        let mut counter = 0;
+    pub fn to_pomodoro(&mut self, mut available_time: i32) -> Counter {
+        let mut counter = Counter::new();
+        let mut last_pause = 0;
 
         // Continue while a new pomodoro can be done (the chill time is not included)
         while available_time >= self.time as i32 {
@@ -44,17 +45,29 @@ impl Pomodoro {
             available_time -= self.time as i32;
 
             // Set the counter reset rules and the corresponding chill time
-            if counter == self.reset_point - 1 {
+            if counter.cycle == self.reset_point - 1 {
                 // reset the counter after and add a long pause when the end of the cycle is
                 // reached
-                counter = 0;
+                counter.cycle = 0;
                 available_time -= self.long_pause as i32;
+                counter.chill_time += self.long_pause;
+                last_pause = self.long_pause;
             } else {
                 // increase the counter and add a short pause
-                counter += 1;
+                counter.cycle += 1;
                 available_time -= self.short_pause as i32;
+                counter.chill_time += self.short_pause;
+                last_pause = self.short_pause;
             }
+            counter.work_time += self.time;
         }
+
+        counter.chill_time -= last_pause;
+        available_time += last_pause as i32;
+
+        counter.spare_time = available_time as u32;
+
+        counter
     }
     /// Create a new instance
     pub fn new(pomodoro: u32) -> Self {
@@ -80,6 +93,8 @@ pub struct Counter {
     pub work_time: u32,
     /// The total chill time in minute
     pub chill_time: u32,
+    /// The time that couldn't be fit in a pomodoro
+    pub spare_time: u32,
 }
 impl Counter {
     /// Create a new instance of Counter
@@ -113,7 +128,7 @@ mod tests {
         pomodoro.to_pomodoro(160);
         assert_eq!(
             pomodoro.pomodoro, 5,
-            "The number of available pomodoro's in 160 mins is not correct [expected: 5; get: {}]",
+            "The number of available pomodoro's in 160 mins is not correct [expected: 5; got: {}]",
             pomodoro.pomodoro
         );
     }
@@ -123,7 +138,17 @@ mod tests {
         pomodoro.to_pomodoro(159);
         assert_eq!(
             pomodoro.pomodoro, 4,
-            "The number of available pomodoro's in 160 mins is not correct [expected: 4; get: {}]",
+            "The number of available pomodoro's in 160 mins is not correct [expected: 4; got: {}]",
+            pomodoro.pomodoro
+        );
+    }
+    #[test]
+    fn time_to_pomodoro_spare_time() {
+        let mut pomodoro = Pomodoro::new(0);
+        let counter = pomodoro.to_pomodoro(189);
+        assert_eq!(
+            counter.spare_time, 29,
+            "The spare time for 189mins is not correct [expected: 29; got: {}]",
             pomodoro.pomodoro
         );
     }

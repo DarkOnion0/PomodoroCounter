@@ -1,6 +1,7 @@
 use axum::extract::Path;
 use axum::{routing::get, Json, Router};
 use core::{Counter, Pomodoro};
+use serde::Serialize;
 
 #[tokio::main]
 async fn main() {
@@ -24,8 +25,17 @@ async fn get_pomodoro(Path(pomodoro): Path<u32>) -> Json<Counter> {
     Json(args.to_time())
 }
 
-async fn get_time(Path(time): Path<u32>) -> Json<Pomodoro> {
+async fn get_time(Path(time): Path<u32>) -> Json<PomodoroCounter> {
     let mut pomodoro = Pomodoro::new(0);
-    pomodoro.to_pomodoro(time as i32);
-    Json(pomodoro)
+    let counter = pomodoro.to_pomodoro(time as i32);
+    Json(PomodoroCounter {
+        pomdoro: pomodoro.pomodoro,
+        counter: counter,
+    })
+}
+
+#[derive(Serialize)]
+struct PomodoroCounter {
+    pomdoro: u32,
+    counter: Counter,
 }

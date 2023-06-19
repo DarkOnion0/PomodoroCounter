@@ -73,11 +73,20 @@ fn main() {
                 reset_point: cli.reset_point,
                 short_pause: cli.short_pause,
             };
-            pomodoro.to_pomodoro(*count as i32);
+            let cycle_counter = pomodoro.to_pomodoro(*count as i32);
+
+            println!("Number of pomodoro(s): {}", pomodoro.pomodoro);
+            println!("Spare time: {} min(s)", cycle_counter.spare_time);
 
             println!(
-                "The number of pomodoro in {} min(s) is {}",
-                count, pomodoro.pomodoro
+                "\nWork time: {} hour(s) and {} minute(s)",
+                cycle_counter.work_time / 60,
+                cycle_counter.work_time % 60
+            );
+            println!(
+                "Chill time: {} hour(s) and {} minute(s)",
+                cycle_counter.chill_time / 60,
+                cycle_counter.chill_time % 60
             );
         }
         None => {}

@@ -65,7 +65,7 @@ jobs:
 
     strategy:
       matrix:
-        workspace: ["web", "cli", "core"]
+        workspace: ["web", "cli", "utils"]
 
     steps:
       - name: Checkout source code

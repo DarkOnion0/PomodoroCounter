@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-pub mod prelude;
 
 #[derive(Serialize, Default)]
 pub struct Pomodoro {

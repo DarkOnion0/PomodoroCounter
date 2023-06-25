@@ -1,4 +1,5 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+pub mod prelude;
 
 #[derive(Serialize, Default)]
 pub struct Pomodoro {
@@ -83,7 +84,7 @@ impl Pomodoro {
 }
 
 /// The counter status for the requested pomodoro time
-#[derive(Default, Serialize)]
+#[derive(Default, Serialize, Deserialize)]
 pub struct Counter {
     /// The cycle counter, only used to convert from pomodoro to time
     #[serde(skip_serializing)]

@@ -8,4 +8,4 @@ licence = "AGPL-3.0-only"
 
 [dependencies]
 clap = { version = "4.0.30", features = ["derive"] }
-core = { path = "../core" }
+utils = { path = "../utils" }

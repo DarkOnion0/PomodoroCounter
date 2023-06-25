@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use core::Pomodoro;
+use utils::Pomodoro;
 
 #[derive(Parser, Debug)]
 #[command(author = "DarkOnion0", version, about = "A small CLI utils to convert pomodoros/times", long_about = None)]

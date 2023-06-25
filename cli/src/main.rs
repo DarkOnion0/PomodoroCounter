@@ -6,18 +6,6 @@ use utils::Pomodoro;
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
-    /// The time associated to a pomodoro in minutes
-    #[arg(short, long, default_value_t = 25)]
-    pub time: u32,
-    /// The number of pomodoro before the reset happen
-    #[arg(short, long, default_value_t = 4)]
-    pub reset_point: u8,
-    /// The short pause time in minutes
-    #[arg(short, long, default_value_t = 5)]
-    pub short_pause: u32,
-    /// The long pause time in minutes
-    #[arg(short, long, default_value_t = 20)]
-    pub long_pause: u32,
 }
 
 #[derive(Subcommand, Debug)]
@@ -26,11 +14,35 @@ enum Commands {
     Pomodoro {
         /// The number of pomodoro to convert
         count: u32,
+        /// The time associated to a pomodoro in minutes
+        #[arg(short, long, default_value_t = 25)]
+        time: u32,
+        /// The number of pomodoro before the reset happen
+        #[arg(short, long, default_value_t = 4)]
+        reset_point: u8,
+        /// The short pause time in minutes
+        #[arg(short, long, default_value_t = 5)]
+        short_pause: u32,
+        /// The long pause time in minutes
+        #[arg(short, long, default_value_t = 20)]
+        long_pause: u32,
     },
     /// Convert time to pomodoro(s)
     Time {
         /// The number of minutes to convert
         count: u32,
+        /// The time associated to a pomodoro in minutes
+        #[arg(short, long, default_value_t = 25)]
+        time: u32,
+        /// The number of pomodoro before the reset happen
+        #[arg(short, long, default_value_t = 4)]
+        reset_point: u8,
+        /// The short pause time in minutes
+        #[arg(short, long, default_value_t = 5)]
+        short_pause: u32,
+        /// The long pause time in minutes
+        #[arg(short, long, default_value_t = 20)]
+        long_pause: u32,
     },
 }
 
@@ -39,13 +51,19 @@ fn main() {
     let cli = Cli::parse();
 
     match &cli.command {
-        Some(Commands::Pomodoro { count }) => {
+        Some(Commands::Pomodoro {
+            count,
+            time,
+            reset_point,
+            short_pause,
+            long_pause,
+        }) => {
             let mut pomodoro = Pomodoro {
                 pomodoro: *count,
-                time: cli.time,
-                long_pause: cli.long_pause,
-                reset_point: cli.reset_point,
-                short_pause: cli.short_pause,
+                time: *time,
+                long_pause: *long_pause,
+                reset_point: *reset_point,
+                short_pause: *short_pause,
             };
             let cycle_counter = pomodoro.to_time();
 
@@ -65,13 +83,19 @@ fn main() {
                 (cycle_counter.work_time + cycle_counter.chill_time) % 60
             );
         }
-        Some(Commands::Time { count }) => {
+        Some(Commands::Time {
+            count,
+            time,
+            reset_point,
+            short_pause,
+            long_pause,
+        }) => {
             let mut pomodoro = Pomodoro {
                 pomodoro: 0,
-                time: cli.time,
-                long_pause: cli.long_pause,
-                reset_point: cli.reset_point,
-                short_pause: cli.short_pause,
+                time: *time,
+                long_pause: *long_pause,
+                reset_point: *reset_point,
+                short_pause: *short_pause,
             };
             let cycle_counter = pomodoro.to_pomodoro(*count as i32);
 

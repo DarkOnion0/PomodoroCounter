@@ -1,5 +1,5 @@
-use core::Counter;
 use serde::{Deserialize, Serialize};
+use utils::Counter;
 
 #[derive(Serialize)]
 pub struct PomodoroCounter {

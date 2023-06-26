@@ -37,10 +37,12 @@
               };
 
               languages.rust.enable = true;
+              languages.java.enable = true;
 
               packages = with pkgs; [
                 git
                 alejandra
+                yarn
               ];
 
               scripts = {

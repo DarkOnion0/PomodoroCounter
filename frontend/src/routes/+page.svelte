@@ -4,10 +4,13 @@
   import { ArrowsRightLeft } from "@steeze-ui/heroicons";
 
   let isActive = true;
+
+  let pomodoroCount: number;
+  let timeCount: number;
 </script>
 
 
-<ConvertCard isPomodoro={isActive ? true : false} active={true} />
+<ConvertCard active={isActive} bind:value={pomodoroCount} />
 
 <button
   class="btn btn-square btn-ghost mx-auto lg:my-auto"
@@ -18,8 +21,8 @@
   <Icon
     src={ArrowsRightLeft}
     theme="solid"
-    class="inline-block h-6 stroke-current"
+    class="inline-block h-6 stroke-current rotate-90 lg:rotate-0"
   />
 </button>
 
-<ConvertCard isPomodoro={isActive ? false : true} active={false} />
+<ConvertCard isPomodoro={false} active={!isActive} bind:value={timeCount} />

@@ -3,19 +3,19 @@
   import { Icon } from "@steeze-ui/svelte-icon";
   import { ArrowsRightLeft } from "@steeze-ui/heroicons";
 
-  let isActive = true;
+  let isPomodoroActive = true;
 
   let pomodoroCount: number;
   let timeCount: number;
 </script>
 
-
-<ConvertCard active={isActive} bind:value={pomodoroCount} />
+<ConvertCard active={isPomodoroActive} bind:value={pomodoroCount} />
 
 <button
   class="btn btn-square btn-ghost mx-auto lg:my-auto"
   on:click={() => {
-    isActive = !isActive;
+    isPomodoroActive = !isPomodoroActive;
+    [pomodoroCount, timeCount] = [timeCount, pomodoroCount];
   }}
 >
   <Icon
@@ -25,4 +25,8 @@
   />
 </button>
 
-<ConvertCard isPomodoro={false} active={!isActive} bind:value={timeCount} />
+<ConvertCard
+  isPomodoro={false}
+  active={!isPomodoroActive}
+  bind:value={timeCount}
+/>

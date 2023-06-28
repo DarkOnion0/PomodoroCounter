@@ -1,0 +1,6 @@
+[toolchain]
+channel = "1.70.0"
+components = [ "rustfmt", "rust-analyzer", "clippy" ]
+targets = [ "wasm32-unknown-unknown","aarch64-unknown-linux-gnu", "x86_64-unknown-linux-gnu" ]
+profile = "minimal"
+

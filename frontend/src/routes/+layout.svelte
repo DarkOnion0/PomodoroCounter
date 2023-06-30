@@ -56,7 +56,7 @@
   <!--
   Body
   -->
-  <div class="flex flex-col lg:flex-row w-full h-full justify-evenly">
+  <div class="flex flex-col lg:flex-row w-full h-full justify-evenly items-center">
     <slot />
   </div>
 </div>

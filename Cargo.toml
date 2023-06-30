@@ -1,2 +1,2 @@
 [workspace]
-members = ["utils", "cli", "web"]
+members = ["pomolib", "cli", "web"]

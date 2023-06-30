@@ -8,4 +8,4 @@ icense = "AGPL-3.0-only"
 
 [dependencies]
 clap = { version = "4.0.30", features = ["derive"] }
-utils = { path = "../utils" }
+pomolib = { path = "../pomolib" }

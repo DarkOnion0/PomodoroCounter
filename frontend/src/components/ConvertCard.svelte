@@ -30,6 +30,11 @@
         </div>
 
         <div class="stat">
+          <div class="stat-title">Spare Time</div>
+          <div class="stat-value">{counter.counter.spare_time} min</div>
+        </div>
+
+        <div class="stat">
           <div class="stat-title">Work Time</div>
           <div class="stat-value">{counter.counter.work_time} min</div>
         </div>
@@ -37,11 +42,6 @@
         <div class="stat">
           <div class="stat-title">Chill Time</div>
           <div class="stat-value">{counter.counter.chill_time} min</div>
-        </div>
-
-        <div class="stat">
-          <div class="stat-title">Spare Time</div>
-          <div class="stat-value">{counter.counter.spare_time} min</div>
         </div>
       </div>
     {/if}

@@ -35,8 +35,15 @@
 <button
   class="btn btn-square btn-ghost mx-auto lg:my-auto"
   on:click={() => {
+    // If we are switching from pomodoro to time
+    if (isPomodoroActive) {
+      // update the value of the timeCount var to match the value of the previouly set pomodoro numbers
+      timeCount = counter.counter.work_time + counter.counter.chill_time;
+    } else {
+      // update the value of the pomodoroCount var to match the corresponding time available
+      pomodoroCount = counter.pomodoro;
+    }
     isPomodoroActive = !isPomodoroActive;
-    [pomodoroCount, timeCount] = [timeCount, pomodoroCount];
   }}
 >
   <Icon

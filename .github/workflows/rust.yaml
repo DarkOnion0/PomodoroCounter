@@ -71,7 +71,7 @@ jobs:
 
     strategy:
       matrix:
-        workspace: ["web", "cli", "utils"]
+        workspace: ["web", "cli", "pomolib"]
 
     steps:
       - name: Checkout source code

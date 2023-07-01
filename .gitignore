@@ -6,6 +6,10 @@
 result/
 result
 
+# JS
+node_modules/
+dist/
+
 # Devenv
 .devenv*
 devenv.local.nix

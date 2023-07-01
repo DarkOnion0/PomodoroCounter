@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 #[derive(Serialize, Default)]
 pub struct Pomodoro {
     /// The number of pomodoro
@@ -13,6 +15,7 @@ pub struct Pomodoro {
     /// The long pause time in minutes
     pub long_pause: u32,
 }
+#[wasm_bindgen]
 impl Pomodoro {
     /// Convert pomodoro(s) to minutes
     pub fn to_time(&mut self) -> Counter {
@@ -83,6 +86,7 @@ impl Pomodoro {
 }
 
 /// The counter status for the requested pomodoro time
+#[wasm_bindgen]
 #[derive(Default, Serialize, Deserialize)]
 pub struct Counter {
     /// The cycle counter, only used to convert from pomodoro to time
@@ -96,6 +100,7 @@ pub struct Counter {
     /// The time that couldn't be fit in a pomodoro
     pub spare_time: u32,
 }
+#[wasm_bindgen]
 impl Counter {
     /// Create a new instance of Counter
     pub fn new() -> Self {

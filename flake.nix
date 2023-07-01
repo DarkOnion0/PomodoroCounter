@@ -2,7 +2,7 @@
   description = "A very basic flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable"; # We want to use packages from the binary cache
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
@@ -36,11 +36,24 @@
                 RUST_BACKTRACE = 1;
               };
 
-              languages.rust.enable = true;
+              languages.javascript.enable = true;
 
               packages = with pkgs; [
+                # MISC
                 git
+
+                # NIX
                 alejandra
+
+                # JS
+                yarn
+                # RUST
+                rustup
+                # WASM
+                wasm-pack
+                openssl
+                pkg-config
+                binaryen
               ];
 
               scripts = {
@@ -50,9 +63,9 @@
 
               pre-commit.hooks = {
                 # Rust
-                clippy.enable = true;
-                rustfmt.enable = true;
-                cargo-check.enable = true;
+                clippy.enable = false;
+                rustfmt.enable = false;
+                cargo-check.enable = false;
 
                 # Nix
                 alejandra.enable = true;

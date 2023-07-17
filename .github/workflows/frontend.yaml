@@ -1,0 +1,122 @@
+name: Frontend
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "pomolib/"
+      - "web/**"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "pomolib/"
+      - "web/**"
+
+env:
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Prereqs
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          override: true
+          profile: minimal
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v4
+
+      # Restore Cache
+
+      - name: Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v2
+
+      - name: Restore rust target
+        id: cache-rust-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./target
+            ~/.cargo
+          key: ${{ runner.os }}-rust
+
+      - name: Restore frontend
+        id: cache-frontend-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./frontend/src/wasm/
+            ./frontend/node_modules/
+            ./frontend/.svelte_kit/
+          key: ${{ runner.os }}-frontend
+
+      - name: Install Yarn Deps
+        run: |
+          cd frontend
+          nix develop --impure --command bash -c "yarn install"
+
+      # Build
+
+      - name: Build Rust
+        run: |
+          cd pomolib
+          wasm-pack build --out-dir ../frontend/src/wasm/
+
+      - name: Build Frontend
+        run: |
+          cd frontend
+          nix develop --impure --command bash -c "yarn build"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./frontend/build/
+
+      # Save Cache
+
+      - name: Save rust target
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./target
+            ~/.cargo
+          key: ${{ steps.cache-rust-restore.outputs.cache-primary-key }}
+
+      - name: Save frontend target
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ./frontend/src/wasm/
+            ./frontend/node_modules/
+            ./frontend/.svelte_kit/
+          key: ${{ steps.cache-frontend-restore.outputs.cache-primary-key }}
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push'
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

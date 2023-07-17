@@ -74,7 +74,7 @@ jobs:
       - name: Build Rust
         run: |
           cd pomolib
-          wasm-pack build --out-dir ../frontend/src/wasm/
+          nix develop --impure --command bash -c "wasm-pack build --out-dir ../frontend/src/wasm/"
 
       - name: Build Frontend
         run: |

@@ -1,6 +1,7 @@
 name: Frontend
 
 on:
+  workflow_dispatch:
   push:
     branches: ["main"]
     paths:
@@ -104,7 +105,7 @@ jobs:
 
   deploy:
     needs: build
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:

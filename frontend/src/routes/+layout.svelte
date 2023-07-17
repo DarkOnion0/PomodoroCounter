@@ -28,7 +28,7 @@
   -->
   <div class="navbar bg-base-100">
     <div class="flex-1">
-      <a href="/" class="btn btn-ghost normal-case text-xl">PomodoroCounter</a>
+      <a href="/PomodoroCounter" class="btn btn-ghost normal-case text-xl">PomodoroCounter</a>
     </div>
 
     <div class="flex-none">

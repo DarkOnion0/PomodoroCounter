@@ -21,7 +21,6 @@ concurrency:
 
 jobs:
   build:
-    needs: [test]
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +39,8 @@ jobs:
 
       # Restore Cache
 
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v2
 
       - name: Restore rust target
         id: cache-rust-restore
@@ -81,7 +81,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: "./frontend/build/"
+          path: ./frontend/build/
 
       # Save Cache
 

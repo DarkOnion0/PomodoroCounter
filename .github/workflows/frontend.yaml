@@ -5,13 +5,13 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "pomolib/"
-      - "web/**"
+      - "pomolib/**"
+      - "frontend/**"
   pull_request:
     branches: ["main"]
     paths:
-      - "pomolib/"
-      - "web/**"
+      - "pomolib/**"
+      - "frontend/**"
 
 env:
   CARGO_TERM_COLOR: always

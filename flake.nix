@@ -7,6 +7,11 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
 
     devenv.url = "github:cachix/devenv";
+
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -14,6 +19,7 @@
     nixpkgs,
     flake-parts,
     devenv,
+    fenix,
     ...
   }:
     flake-parts.lib.mkFlake {inherit inputs;} {
@@ -47,8 +53,13 @@
 
                 # JS
                 yarn
+
                 # RUST
-                rustup
+                (fenix.packages.${system}.fromToolchainFile {
+                  file = ./rust-toolchain.toml;
+                  sha256 = "sha256-gdYqng0y9iHYzYPAdkC/ka3DRny3La/S5G8ASj0Ayyc=";
+                })
+
                 # WASM
                 wasm-pack
                 openssl

@@ -5,17 +5,20 @@ on:
   push:
     branches: ["main"]
     paths:
+      - "flake.**"
       - "pomolib/**"
       - "frontend/**"
+      - ".github/workflows/frontend.yaml"
   pull_request:
     branches: ["main"]
     paths:
+      - "flake.**"
       - "pomolib/**"
       - "frontend/**"
+      - ".github/workflows/frontend.yaml"
 
 env:
   CARGO_TERM_COLOR: always
-  RUST_TOOLCHAIN: "1.70"
 
 concurrency:
   group: "pages"
@@ -29,13 +32,6 @@ jobs:
       # Prereqs
       - name: Checkout source code
         uses: actions/checkout@v3
-
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          override: true
-          profile: minimal
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v4

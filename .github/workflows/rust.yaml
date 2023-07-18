@@ -6,15 +6,18 @@ on:
     paths:
       - "**.rs"
       - "**.toml"
+      - "flake.**"
+      - ".github/workflows/rust.yaml"
   pull_request:
     branches: ["main"]
     paths:
       - "**.rs"
       - "**.toml"
+      - "flake.**"
+      - ".github/workflows/rust.yaml"
 
 env:
   CARGO_TERM_COLOR: always
-  RUST_TOOLCHAIN: "1.69"
 
 jobs:
   build:
@@ -26,15 +29,17 @@ jobs:
         workspace: ["web", "cli"]
 
     steps:
+      # Prereqs
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          override: true
-          profile: minimal
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v4
+
+      # Caching
+
+      - name: Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v2
 
       - name: Restore rust target
         id: cache-rust-restore
@@ -45,11 +50,12 @@ jobs:
             ~/.cargo
           key: ${{ runner.os }}-rust
 
-      - name: Build
-        run: cargo build -p ${{ matrix.workspace }} --verbose
+      # Build
 
-      - name: Zip artifact
-        run: zip release.zip ./target/debug/${{ matrix.workspace }} -r
+      - name: Build
+        run: nix develop --impure --command bash -c "cargo build -p ${{ matrix.workspace }} --verbose"
+
+      # Caching
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3.1.2
@@ -58,7 +64,6 @@ jobs:
           path: ./release.zip
 
       - name: Save rust target
-        id: cache-primes-save
         uses: actions/cache/save@v3
         with:
           path: |
@@ -74,8 +79,17 @@ jobs:
         workspace: ["web", "cli", "pomolib"]
 
     steps:
+      # Prereq
       - name: Checkout source code
         uses: actions/checkout@v3
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v4
+
+      # Caching
+
+      - name: Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v2
 
       - name: Restore rust target
         id: cache-rust-restore
@@ -86,18 +100,14 @@ jobs:
             ~/.cargo
           key: ${{ runner.os }}-rust
 
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          override: true
-          profile: minimal
+      # Run
 
       - name: Run tests
-        run: cargo test -p ${{ matrix.workspace }} --verbose
+        run: nix develop --impure --command bash -c "cargo test -p ${{ matrix.workspace }} --verbose"
+
+      # Caching
 
       - name: Save rust target
-        id: cache-primes-save
         uses: actions/cache/save@v3
         with:
           path: |

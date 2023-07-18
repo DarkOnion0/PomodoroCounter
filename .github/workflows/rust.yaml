@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         with:
           name: x86_64-linux-debug-${{ matrix.workspace }}
-          path: ./release.zip
+          path: ./target/debug/${{ matrix.workspace }}
 
       - name: Save rust target
         uses: actions/cache/save@v3

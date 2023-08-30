@@ -1,10 +1,16 @@
 <script lang="ts">
   import type { PomodoroCounter } from "../types";
+  import type { TimeValue } from "./types";
 
   export let isPomodoro = true;
   export let active: boolean;
-  export let value: number;
+  export let value: number|TimeValue;
   export let counter: PomodoroCounter;
+
+  $: if (!isPomodoro && value.minutes >= 60) {
+    value.hours += Math.floor(value.minutes / 60);
+    value.minutes = value.minutes % 60
+  }
 </script>
 
 <div
@@ -54,13 +60,34 @@
   {:else}
     <h1 class="text-center">Time</h1>
     {#if active}
-      <input
-        type="number"
-        placeholder="Enter some minutes"
-        class="input input-bordered w-full max-w-xs"
-        disabled={!active}
-        bind:value
-      />
+      <div class="grid grid-columns-2">
+        <div class="form-control w-full max-w-xs">
+          <label class="label">
+            <span class="label-text">Hour(s)</span>
+          </label>
+          <input
+            type="number"
+            placeholder="Enter some hours"
+            class="input input-bordered w-full max-w-xs"
+            disabled={!active}
+            bind:value={value.hours}
+          />
+        </div>
+  
+        <div class="form-control w-full max-w-xs">
+          <label class="label">
+            <span class="label-text">Minute(s)</span>
+          </label>
+          <input
+            type="number"
+            placeholder="Enter some minutes"
+            class="input input-bordered w-full max-w-xs"
+            disabled={!active}
+            bind:value={value.minutes}
+          />
+        </div>
+      </div>
+
     {:else}
       <div class="grid grid-cols-2">
         <div class="stat">

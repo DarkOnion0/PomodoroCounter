@@ -28,7 +28,7 @@
   -->
   <div class="navbar bg-base-100">
     <div class="flex-1">
-      <a href="/PomodoroCounter" class="btn btn-ghost normal-case text-xl">PomodoroCounter</a>
+      <a aria-label="Homepage" href="/PomodoroCounter" class="btn btn-ghost normal-case text-xl">PomodoroCounter</a>
     </div>
 
     <div class="flex-none">
@@ -36,6 +36,7 @@
         target="_blank"
         href="https://github.com/DarkOnion0/PomodoroCounter"
         class="btn btn-square btn-ghost"
+        aria-label="GitHub Repository"
       >
         <Icon
           src={Github}
@@ -43,7 +44,7 @@
           class="inline-block h-6 stroke-current"
         />
       </a>
-      <button class="btn btn-square btn-ghost" onclick="settings.showModal()">
+      <button aria-label="Settings" class="btn btn-square btn-ghost" onclick="settings.showModal()">
         <Icon
           src={Cog6Tooth}
           theme="solid"

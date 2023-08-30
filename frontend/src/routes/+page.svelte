@@ -38,6 +38,7 @@
 
 <button
   class="btn btn-square btn-ghost mx-auto lg:my-auto"
+  aria-label="Switch input"
   on:click={() => {
     // If we are switching from pomodoro to time
     if (isPomodoroActive) {

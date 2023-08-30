@@ -31,17 +31,23 @@
 
         <div class="stat">
           <div class="stat-title">Spare Time</div>
-          <div class="stat-value">{counter.counter.spare_time} min</div>
+          <div class="stat-value">
+            {#if Math.floor(counter.counter.spare_time / 60) > 0}{Math.floor(counter.counter.spare_time / 60)}hr{/if} {counter.counter.spare_time % 60}min
+          </div>
         </div>
 
         <div class="stat">
           <div class="stat-title">Work Time</div>
-          <div class="stat-value">{counter.counter.work_time} min</div>
+          <div class="stat-value">
+            {#if Math.floor(counter.counter.work_time / 60) > 0}{Math.floor(counter.counter.work_time / 60)}hr{/if} {counter.counter.work_time % 60}min
+          </div>
         </div>
 
         <div class="stat">
           <div class="stat-title">Chill Time</div>
-          <div class="stat-value">{counter.counter.chill_time} min</div>
+          <div class="stat-value">
+            {#if Math.floor(counter.counter.chill_time / 60) > 0}{Math.floor(counter.counter.chill_time / 60)}hr{/if} {counter.counter.chill_time % 60}min
+          </div>
         </div>
       </div>
     {/if}
@@ -59,12 +65,16 @@
       <div class="grid grid-cols-2">
         <div class="stat">
           <div class="stat-title">Work Time</div>
-          <div class="stat-value">{counter.counter.work_time} min</div>
+          <div class="stat-value">
+            {#if Math.floor(counter.counter.work_time / 60) > 0}{Math.floor(counter.counter.work_time / 60)}hr{/if} {counter.counter.work_time % 60}min
+          </div>
         </div>
 
         <div class="stat">
           <div class="stat-title">Chill Time</div>
-          <div class="stat-value">{counter.counter.chill_time} min</div>
+          <div class="stat-value">
+            {#if Math.floor(counter.counter.chill_time / 60) > 0}{Math.floor(counter.counter.chill_time / 60)}hr{/if} {counter.counter.chill_time % 60}min
+          </div>
         </div>
       </div>
     {/if}

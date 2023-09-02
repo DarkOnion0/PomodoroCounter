@@ -48,7 +48,7 @@
             inherit inputs pkgs;
             modules = [
               defaultConfig
-              (import ./rust.nix)
+              (import ./rust.nix {inherit pkgs fenix;})
               (import ./frontend.nix)
             ];
           };
@@ -56,7 +56,7 @@
             inherit inputs pkgs;
             modules = [
               defaultConfig
-              (import ./rust.nix)
+              (import ./rust.nix {inherit pkgs fenix;})
             ];
           };
           frontend = devenv.lib.mkShell {

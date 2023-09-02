@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  fenix,
+  ...
+}: {
   env = {
     CARGO_INSTALL_ROOT = "${toString ./.}/.cargo";
     RUST_BACKTRACE = 1;

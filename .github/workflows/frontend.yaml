@@ -63,19 +63,19 @@ jobs:
       - name: Install Yarn Deps
         run: |
           cd frontend
-          nix develop --impure --command bash -c "yarn install"
+          nix develop .#frontend --impure --command bash -c "yarn install"
 
       # Build
 
       - name: Build Rust
         run: |
           cd pomolib
-          nix develop --impure --command bash -c "wasm-pack build --out-dir ../frontend/src/wasm/"
+          nix develop .#rust --impure --command bash -c "wasm-pack build --out-dir ../frontend/src/wasm/"
 
       - name: Build Frontend
         run: |
           cd frontend
-          nix develop --impure --command bash -c "yarn build"
+          nix develop .#frontend --impure --command bash -c "yarn build"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2

@@ -53,7 +53,7 @@ jobs:
       # Build
 
       - name: Build
-        run: nix develop --impure --command bash -c "cargo build -p ${{ matrix.workspace }} --verbose"
+        run: nix develop .#rust --impure --command bash -c "cargo build -p ${{ matrix.workspace }} --verbose"
 
       # Caching
 
@@ -103,7 +103,7 @@ jobs:
       # Run
 
       - name: Run tests
-        run: nix develop --impure --command bash -c "cargo test -p ${{ matrix.workspace }} --verbose"
+        run: nix develop .#rust --impure --command bash -c "cargo test -p ${{ matrix.workspace }} --verbose"
 
       # Caching
 

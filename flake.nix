@@ -33,59 +33,39 @@
         system,
         ...
       }: {
-        devShells.default = devenv.lib.mkShell {
-          inherit inputs pkgs;
-          modules = [
-            {
-              env = {
-                CARGO_INSTALL_ROOT = "${toString ./.}/.cargo";
-                RUST_BACKTRACE = 1;
-              };
+        devShells = let
+          defaultConfig = {
+            packages = with pkgs; [
+              # MISC
+              git
 
-              languages.javascript.enable = true;
-
-              packages = with pkgs; [
-                # MISC
-                git
-
-                # NIX
-                alejandra
-
-                # JS
-                yarn
-
-                # RUST
-                (fenix.packages.${system}.fromToolchainFile {
-                  file = ./rust-toolchain.toml;
-                  sha256 = "sha256-gdYqng0y9iHYzYPAdkC/ka3DRny3La/S5G8ASj0Ayyc=";
-                })
-
-                # WASM
-                wasm-pack
-                openssl
-                pkg-config
-                binaryen
-              ];
-
-              scripts = {
-                run-dev.exec = "cargo run -- ";
-                run-prod.exec = "nix run .# -- ";
-              };
-
-              pre-commit.hooks = {
-                # Rust
-                clippy.enable = false;
-                rustfmt.enable = false;
-                cargo-check.enable = false;
-
-                # Nix
-                alejandra.enable = true;
-
-                # Markdown...
-                prettier.enable = true;
-              };
-            }
-          ];
+              # NIX
+              alejandra
+            ];
+          };
+        in {
+          default = devenv.lib.mkShell {
+            inherit inputs pkgs;
+            modules = [
+              defaultConfig
+              (import ./rust.nix)
+              (import ./frontend.nix)
+            ];
+          };
+          rust = devenv.lib.mkShell {
+            inherit inputs pkgs;
+            modules = [
+              defaultConfig
+              (import ./rust.nix)
+            ];
+          };
+          frontend = devenv.lib.mkShell {
+            inherit inputs pkgs;
+            modules = [
+              defaultConfig
+              (import ./frontend.nix)
+            ];
+          };
         };
 
         packages = rec {

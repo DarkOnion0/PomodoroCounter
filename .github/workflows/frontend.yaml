@@ -70,7 +70,7 @@ jobs:
       - name: Build Rust
         run: |
           cd pomolib
-          nix develop .#rust --impure --command bash -c "wasm-pack build --out-dir ../frontend/src/wasm/"
+          nix develop .#rust --impure --command bash -c "wasm-pack build --profiling --out-dir ../frontend/src/wasm/"
 
       - name: Build Frontend
         run: |

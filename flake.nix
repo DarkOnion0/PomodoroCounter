@@ -51,8 +51,9 @@
           mkMember = pname: {
             inherit pname;
             cargoArtifacts = craneLib.buildDepsOnly {
-              src = ./${pname};
+              src = ./.;
               cargoToml = ./${pname}/Cargo.toml;
+              cargoLock = ./Cargo.lock;
             };
             src = ./${pname};
           };
@@ -106,8 +107,8 @@
               lib.nameValuePair pname (craneLib.buildPackage {
                 inherit pname cargoArtifacts;
                 src = ./.;
-                cargoExtraArgs = "-p ${pname}";
-                cargoToml = ./${pname}/Cargo.toml;
+                cargoExtraArgs = "-p ${pname} -p pomolib";
+                version = (builtins.fromTOML (builtins.readFile ./${pname}/Cargo.toml)).package.version;
               })
           )
           workspace

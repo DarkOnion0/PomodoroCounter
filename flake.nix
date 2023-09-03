@@ -12,6 +12,10 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    crane = {
+      url = "github:ipetkov/crane";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -20,6 +24,7 @@
     flake-parts,
     devenv,
     fenix,
+    crane,
     ...
   }:
     flake-parts.lib.mkFlake {inherit inputs;} {
@@ -31,8 +36,31 @@
         inputs',
         pkgs,
         system,
+        lib,
         ...
-      }: {
+      }: let
+        fenixToolchain = fenix.packages.${system}.fromToolchainFile {
+          file = ./rust-toolchain.toml;
+          sha256 = "sha256-gdYqng0y9iHYzYPAdkC/ka3DRny3La/S5G8ASj0Ayyc=";
+        };
+
+        craneLib =
+          crane.lib.${system}.overrideToolchain fenixToolchain;
+
+        workspace = let
+          mkMember = pname: {
+            inherit pname;
+            cargoArtifacts = craneLib.buildDepsOnly {
+              src = ./${pname};
+              cargoToml = ./${pname}/Cargo.toml;
+            };
+            src = ./${pname};
+          };
+        in [
+          (mkMember "cli")
+          (mkMember "web")
+        ];
+      in {
         devShells = let
           defaultConfig = {
             packages = with pkgs; [
@@ -48,7 +76,7 @@
             inherit inputs pkgs;
             modules = [
               defaultConfig
-              (import ./rust.nix {inherit pkgs fenix;})
+              (import ./rust.nix {inherit pkgs fenixToolchain;})
               (import ./frontend.nix)
             ];
           };
@@ -56,7 +84,7 @@
             inherit inputs pkgs;
             modules = [
               defaultConfig
-              (import ./rust.nix {inherit pkgs fenix;})
+              (import ./rust.nix {inherit pkgs fenixToolchain;})
             ];
           };
           frontend = devenv.lib.mkShell {
@@ -68,41 +96,33 @@
           };
         };
 
-        packages = rec {
-          default = cli;
-          cli = pkgs.rustPlatform.buildRustPackage rec {
-            pname = "cli";
-            version = "0.1.0";
-            src = ./.;
-            cargoBuildFlags = "-p ${pname}";
+        packages = builtins.listToAttrs (
+          map (
+            {
+              pname,
+              cargoArtifacts,
+              src,
+            }:
+              lib.nameValuePair pname (craneLib.buildPackage {
+                inherit pname cargoArtifacts;
+                src = ./.;
+                cargoExtraArgs = "-p ${pname}";
+                cargoToml = ./${pname}/Cargo.toml;
+              })
+          )
+          workspace
+        );
 
-            cargoLock = {
-              lockFile = ./Cargo.lock;
-            };
-          };
-          web = pkgs.rustPlatform.buildRustPackage rec {
-            pname = "web";
-            version = "0.1.0";
-            src = ./.;
-            cargoBuildFlags = "-p ${pname}";
-
-            cargoLock = {
-              lockFile = ./Cargo.lock;
-            };
-          };
-        };
-
-        apps = rec {
-          default = cli;
-          cli = {
-            type = "app";
-            program = "${self.packages.${system}.cli}/bin/cli";
-          };
-          web = {
-            type = "app";
-            program = "${self.packages.${system}.web}/bin/web";
-          };
-        };
+        apps = builtins.listToAttrs (
+          map (
+            {pname, ...}:
+              lib.nameValuePair pname {
+                type = "app";
+                program = "${self.packages.${system}.${pname}}/bin/${pname}";
+              }
+          )
+          workspace
+        );
       };
     };
 }

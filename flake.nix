@@ -108,6 +108,7 @@
                 inherit pname cargoArtifacts;
                 src = ./.;
                 cargoExtraArgs = "-p ${pname} -p pomolib";
+                version = (builtins.fromTOML (builtins.readFile ./${pname}/Cargo.toml)).package.version;
               })
           )
           workspace

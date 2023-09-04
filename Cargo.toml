@@ -1,2 +1,5 @@
 [workspace]
 members = ["pomolib", "cli", "web"]
+
+[workspace.package]
+version = "0.1.0"

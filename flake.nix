@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "A small set of rust lib/bin to provide basic pomodoro planning facilities";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -48,18 +48,41 @@
           crane.lib.${system}.overrideToolchain fenixToolchain;
 
         workspace = let
-          mkMember = pname: {
-            inherit pname;
+          mkMember = {
+            name,
+            profile ? builtins.null,
+          }: let
+            CARGO_PROFILE =
+              if builtins.isNull profile
+              then "release"
+              else "${profile}";
             cargoArtifacts = craneLib.buildDepsOnly {
+              inherit CARGO_PROFILE;
+              pname =
+                if builtins.isNull profile
+                then "pomolib-release"
+                else "pomolib-${profile}";
               src = ./.;
-              cargoToml = ./${pname}/Cargo.toml;
-              cargoLock = ./Cargo.lock;
             };
-            src = ./${pname};
+          in {
+            inherit name cargoArtifacts CARGO_PROFILE;
+            pname =
+              if builtins.isNull profile
+              then "${name}"
+              else "${name}-${profile}";
           };
         in [
-          (mkMember "cli")
-          (mkMember "web")
+          (mkMember {name = "cli";})
+          (mkMember {
+            name = "cli";
+            profile = "dev";
+          })
+
+          (mkMember {name = "web";})
+          (mkMember {
+            name = "web";
+            profile = "dev";
+          })
         ];
       in {
         devShells = let
@@ -70,6 +93,7 @@
 
               # NIX
               alejandra
+              nil
             ];
           };
         in {
@@ -101,14 +125,16 @@
           map (
             {
               pname,
+              name,
               cargoArtifacts,
-              src,
+              CARGO_PROFILE,
+              ...
             }:
               lib.nameValuePair pname (craneLib.buildPackage {
-                inherit pname cargoArtifacts;
+                inherit pname cargoArtifacts CARGO_PROFILE;
                 src = ./.;
-                cargoExtraArgs = "-p ${pname} -p pomolib";
-                version = (builtins.fromTOML (builtins.readFile ./${pname}/Cargo.toml)).package.version;
+                version = (builtins.fromTOML (builtins.readFile ./${name}/Cargo.toml)).package.version;
+                cargoExtraArgs = "-p ${name} -p pomolib";
               })
           )
           workspace
@@ -116,10 +142,14 @@
 
         apps = builtins.listToAttrs (
           map (
-            {pname, ...}:
+            {
+              pname,
+              name,
+              ...
+            }:
               lib.nameValuePair pname {
                 type = "app";
-                program = "${self.packages.${system}.${pname}}/bin/${pname}";
+                program = "${self.packages.${system}.${pname}}/bin/${name}";
               }
           )
           workspace

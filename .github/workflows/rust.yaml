@@ -26,7 +26,7 @@ jobs:
 
     strategy:
       matrix:
-        workspace: ["web", "cli"]
+        workspace: ["pmdrcntr-api", "pmdrcntr"]
 
     steps:
       # Prereqs
@@ -41,42 +41,27 @@ jobs:
       - name: Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v2
 
-      - name: Restore rust target
-        id: cache-rust-restore
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            ./target
-            ~/.cargo
-          key: ${{ runner.os }}-rust
-
       # Build
 
       - name: Build
-        run: nix develop .#rust --impure --command bash -c "cargo build -p ${{ matrix.workspace }} --verbose"
+        run: nix build .#${{ matrix.workspace }}-dev
 
       # Caching
-
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: x86_64-linux-debug-${{ matrix.workspace }}
-          path: ./target/debug/${{ matrix.workspace }}
-
-      - name: Save rust target
-        uses: actions/cache/save@v3
-        with:
-          path: |
-            ./target
-            ~/.cargo
-          key: ${{ steps.cache-rust-restore.outputs.cache-primary-key }}
+      
+      # TODO: re-enable when I find a way to fix the error with nix bundle complaining
+      # about the output not being a derivation
+      #- name: Upload Build Artifact
+      #  uses: actions/upload-artifact@v3.1.2
+      #  with:
+      #    name: x86_64-linux-debug-${{ matrix.workspace }}
+      #    path: ./target/debug/${{ matrix.workspace }}
 
   test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        workspace: ["web", "cli", "pomolib"]
+        workspace: ["pmdrcntr-api", "pmdrcntr", "pomolib"]
 
     steps:
       # Prereq
@@ -90,15 +75,6 @@ jobs:
 
       - name: Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v2
-
-      - name: Restore rust target
-        id: cache-rust-restore
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            ./target
-            ~/.cargo
-          key: ${{ runner.os }}-rust
 
       # Run
 

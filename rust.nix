@@ -3,12 +3,12 @@
   fenixToolchain,
   ...
 }: {
-  env = {
-    CARGO_INSTALL_ROOT = "${toString ./.}/.cargo";
-    RUST_BACKTRACE = 1;
-  };
+  shellHook = ''
+    export RUST_BACKTRACE=1
+    export CARGO_INSTALL_ROOT="${toString ./.}/.cargo"
+  '';
 
-  packages = with pkgs; [
+  nativeBuildInputs = with pkgs; [
     # RUST
     fenixToolchain
 
@@ -18,8 +18,8 @@
     pkg-config
     binaryen
   ];
-  scripts = {
-    run-dev.exec = "cargo run -- ";
-    run-prod.exec = "nix run .# -- ";
-  };
+  #scripts = {
+  #  run-dev.exec = "cargo run -- ";
+  #  run-prod.exec = "nix run .# -- ";
+  #};
 }

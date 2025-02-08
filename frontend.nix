@@ -1,16 +1,15 @@
 {pkgs, ...}: {
-  languages.javascript.enable = true;
-
-  packages = with pkgs; [
+  nativeBuildInputs = with pkgs; [
+    nodejs
     # JS
     yarn
   ];
 
-  pre-commit.hooks = {
-    # Nix
-    alejandra.enable = true;
+  #pre-commit.hooks = {
+  #  # Nix
+  #  alejandra.enable = true;
 
-    # Markdown...
-    prettier.enable = true;
-  };
+  #  # Markdown...
+  #  prettier.enable = true;
+  #};
 }

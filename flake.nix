@@ -38,12 +38,15 @@
           sha256 = "sha256-vMlz0zHduoXtrlu0Kj1jEp71tYFXyymACW8L4jzrzNA=";
         };
 
-        craneLib =
-          crane.lib.${system}.overrideToolchain fenixToolchain;
+        #craneLib =
+        #  crane.lib.${system}.overrideToolchain fenixToolchain;
+
+        craneLib = (crane.mkLib pkgs).overrideToolchain fenixToolchain;
 
         workspace = let
           mkMember = {
             name,
+            binName ? builtins.null,
             profile ? builtins.null,
           }: let
             CARGO_PROFILE =
@@ -59,22 +62,30 @@
               src = ./.;
             };
           in {
-            inherit name cargoArtifacts CARGO_PROFILE;
+            inherit name binName cargoArtifacts CARGO_PROFILE;
             pname =
               if builtins.isNull profile
               then "${name}"
               else "${name}-${profile}";
           };
         in [
-          (mkMember {name = "cli";})
           (mkMember {
             name = "cli";
+            binName = "pmdrcntr";
+          })
+          (mkMember {
+            name = "cli";
+            binName = "pmdrcntr";
             profile = "dev";
           })
 
-          (mkMember {name = "web";})
           (mkMember {
             name = "web";
+            binName = "pmdrcntr-api";
+          })
+          (mkMember {
+            name = "web";
+            binName = "pmdrcntr-api";
             profile = "dev";
           })
         ];
@@ -101,6 +112,7 @@
             {
               pname,
               name,
+              binName,
               cargoArtifacts,
               CARGO_PROFILE,
               ...
@@ -109,7 +121,11 @@
                 inherit pname cargoArtifacts CARGO_PROFILE;
                 src = ./.;
                 version = (builtins.fromTOML (builtins.readFile ./${name}/Cargo.toml)).package.version;
-                cargoExtraArgs = "-p ${name} -p pomolib";
+                cargoExtraArgs = "-p ${
+                  if !(builtins.isNull binName)
+                  then binName
+                  else name
+                } -p pomolib";
               })
           )
           workspace
@@ -120,11 +136,16 @@
             {
               pname,
               name,
+              binName,
               ...
             }:
               lib.nameValuePair pname {
                 type = "app";
-                program = "${self.packages.${system}.${pname}}/bin/${name}";
+                program = "${self.packages.${system}.${pname}}/bin/${
+                  if !(builtins.isNull binName)
+                  then binName
+                  else name
+                }";
               }
           )
           workspace
